@@ -2,51 +2,41 @@ import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { USERS_MOCK } from "../../../mocks/users.mocks";
 import { User } from "../../domain/models/user.model";
-import { UserRepository } from "../../domain/repositories/user.repository";
 
 /**
- * Implementación concreta del repositorio de usuarios.
- *
- * @description
- * Esta clase pertenece a la **capa de infraestructura** y actúa como
- * implementación del contrato `UserRepository`.
- *
- * Se encarga de proporcionar los datos de usuarios a la aplicación.
- * En este caso, utiliza una fuente de datos mock (`USERS_MOCK`) para
- * simular la obtención de información, normalmente utilizada en
- * entornos de desarrollo o pruebas.
+ * Servicio de infraestructura encargado de obtener datos de usuarios.
  *
  * @remarks
- * En una implementación real, esta clase podría comunicarse con:
- * - Un API REST
- * - Un backend GraphQL
- * - Una base de datos local
+ * Forma parte de la capa de *Infrastructure* y funciona como
+ * **fuente de datos (Data Source)**.
  *
- * Esta implementación se registra en el sistema de inyección de
- * dependencias como proveedor del `UserRepository`.
+ * Este servicio:
+ * - No conoce reglas de negocio
+ * - No depende de casos de uso
+ * - No implementa contratos del dominio
+ *
+ * Es consumido por `UserRepositoryImpl`,
+ * que se encarga de adaptar los datos al dominio.
  *
  * @example
  * ```ts
- * providers: [
- *   { provide: UserRepository, useClass: UserService }
- * ]
+ * this.userService.getAll().subscribe(users => {
+ *   console.log(users);
+ * });
  * ```
- *
- * @see UserRepository
- * @see User
  */
-@Injectable()
-export class UserService extends UserRepository {
+@Injectable({ providedIn: 'root' })
+export class UserService {
 
     /**
      * Obtiene el listado completo de usuarios.
      *
-     * @returns {Observable<User[]>}
-     * Observable que emite un arreglo de usuarios.
-     *
      * @remarks
-     * Actualmente retorna datos simulados desde `USERS_MOCK`.
-     * Puede ser reemplazado por una llamada HTTP u otra fuente de datos.
+     * Actualmente devuelve datos mockeados (`USERS_MOCK`).
+     * Este método puede evolucionar para consumir
+     * una API REST, GraphQL o IndexedDB.
+     *
+     * @returns Observable que emite un arreglo de {@link User}
      */
     getAll(): Observable<User[]> {
         return of(USERS_MOCK);

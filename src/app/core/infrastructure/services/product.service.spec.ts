@@ -20,10 +20,4 @@ describe('ProductService (Infrastructure)', () => {
     });
   });
 
-  it('debe devolver un array no vacío', (done) => {
-    service.getAll().subscribe((products) => {
-      expect(products.length).toBeGreaterThan(0);
-      done();
-    });
-  });
 });

@@ -6,6 +6,8 @@ import { ProductRepository } from './core/domain/repositories/product.repository
 import { UserRepository } from './core/domain/repositories/user.repository';
 import { ProductService } from './core/infrastructure/services/product.service';
 import { UserService } from './core/infrastructure/services/user.service';
+import { UserRepositoryImpl } from './core/infrastructure/repositories/user.repository.impl';
+import { ProductRepositoryImpl } from './core/infrastructure/repositories/product.repository.impl';
 
 /**
  * Configuración principal de la aplicación Angular.
@@ -34,8 +36,47 @@ export const appConfig: ApplicationConfig = {
    */
   providers: [
 
-    { provide: UserRepository, useClass: UserService },
-    { provide: ProductRepository, useClass: ProductService },
+    /**
+     * Provider del repositorio de usuarios.
+     *
+     * @remarks
+     * Este provider registra la implementación concreta
+     * {@link UserRepositoryImpl} como adaptador del contrato
+     * {@link UserRepository} definido en la capa de dominio.
+     *
+     * Gracias a este provider:
+     * - Los casos de uso dependen únicamente del contrato
+     * - La infraestructura puede cambiar sin afectar al dominio
+     *
+     * Este binding representa el punto de integración entre:
+     * - Dominio (Repository abstracto)
+     * - Infrastructure (RepositoryImpl)
+     *
+     * @see {@link UserRepository}
+     * @see {@link UserRepositoryImpl}
+     */
+    { provide: UserRepository, useClass: UserRepositoryImpl },
+
+    /**
+     * Provider del repositorio de productos.
+     *
+     * @remarks
+     * Registra {@link ProductRepositoryImpl} como la
+     * implementación concreta del contrato
+     * {@link ProductRepository}.
+     *
+     * Este patrón permite:
+     * - Inversión de dependencias
+     * - Sustitución transparente de la fuente de datos
+     * - Facilitar pruebas unitarias mediante mocks
+     *
+     * Es el único lugar donde el dominio
+     * conoce qué implementación se utiliza.
+     *
+     * @see {@link ProductRepository}
+     * @see {@link ProductRepositoryImpl}
+     */
+    { provide: ProductRepository, useClass: ProductRepositoryImpl },
 
     /**
      * Proveedor de listeners globales de errores del navegador.
@@ -66,15 +107,5 @@ export const appConfig: ApplicationConfig = {
      * @see {@link routes}
      */
     provideRouter(routes),
-
-    /**
-     * Proveedor del cliente HTTP.
-     *
-     * @remarks
-     * Configura `HttpClient` con interceptores personalizados
-     * para manejar peticiones y respuestas HTTP de forma
-     * centralizada.
-     */
-    provideHttpClient(),
   ]
 };
