@@ -19,9 +19,12 @@ src/app
 │   │       └── get-product-by-id.usecase.ts
 │   │
 │   └── infrastructure
-│       └── services
-│           ├── user-api.service.ts
-│           └── product-api.service.ts
+│       ├── services
+│       │   ├── user-api.service.ts
+│       │   └── product-api.service.ts
+│       └── repositories
+│           ├── user.repository.impl.ts
+│           └── product.repository.impl.ts
 │
 ├── presentation
 │   ├── users
@@ -69,4 +72,13 @@ src/app/core/application/usecases/product/
 src/app/core/infrastructure/services/
 ├── user.service.ts
 └── product.service.ts
+```
+
+## Paso 5 - Crear Repositorios Implementadores
+
+
+```
+src/app/core/infrastructure/repositories/
+├── user.repository.impl.ts
+└── product.repository.impl.ts
 ```
