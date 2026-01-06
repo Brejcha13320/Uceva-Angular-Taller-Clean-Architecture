@@ -1,8 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { User } from "../../domain/models/user.model";
-import { UserRepository } from "../../domain/repositories/user.repository";
-import { UserService } from "../services/user.service";
+import { UserRepository } from "../../../domain/repositories/user.repository";
+import { DataService } from "../../services/data.service";
+import { User } from "../../../domain/models/user.model";
 
 /**
  * Implementación concreta del repositorio de usuarios.
@@ -12,7 +12,7 @@ import { UserService } from "../services/user.service";
  * el rol de **Adapter** entre el dominio y la fuente de datos.
  *
  * Implementa el contrato {@link UserRepository}
- * utilizando {@link UserService} como datasource.
+ * utilizando {@link DataService} como datasource.
  *
  * Este patrón permite:
  * - Desacoplar el dominio de detalles técnicos
@@ -20,10 +20,10 @@ import { UserService } from "../services/user.service";
  * - Facilitar pruebas unitarias mediante mocks
  *
  * @see {@link UserRepository}
- * @see {@link UserService}
+ * @see {@link DataService}
  */
 @Injectable()
-export class UserRepositoryImpl extends UserRepository {
+export class UserLocalRepositoryImpl extends UserRepository {
 
     /**
      * Datasource encargado de obtener los datos de usuarios.
@@ -32,7 +32,7 @@ export class UserRepositoryImpl extends UserRepository {
      * Se inyecta mediante la API `inject()` de Angular,
      * recomendada en arquitecturas modernas y código standalone.
      */
-    private userService = inject(UserService);
+    private dataService = inject(DataService);
 
     /**
      * Obtiene el listado completo de usuarios.
@@ -49,7 +49,7 @@ export class UserRepositoryImpl extends UserRepository {
      * @returns Observable que emite un arreglo de {@link User}
      */
     getAll(): Observable<User[]> {
-        return this.userService.getAll();
+        return this.dataService.getAllUsersLocal();
     }
 
 }

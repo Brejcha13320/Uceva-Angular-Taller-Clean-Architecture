@@ -1,5 +1,6 @@
-# Clean Architecture
+# Clean Architecture en Angular
 
+```
 src/app
 │
 ├── core
@@ -31,6 +32,7 @@ src/app
 │   └── products
 │
 └── app.config.ts
+```
 
 
 ## Paso 1 - Crear Modelos
@@ -76,9 +78,23 @@ src/app/core/infrastructure/services/
 
 ## Paso 5 - Crear Repositorios Implementadores
 
+### Implementación para Consumo de Datos Local
+```
+src/app/core/infrastructure/repositories/local
+├── user-local.repository.impl.ts
+└── product-local.repository.impl.ts
+```
+
+### Implementación para Consumo de Datos NodeJS
+```
+src/app/core/infrastructure/repositories/node
+├── user-node.repository.impl.ts
+└── product-node.repository.impl.ts
+```
+
+## Paso 6 - Agregar Providers con sus Implementadores
 
 ```
-src/app/core/infrastructure/repositories/
-├── user.repository.impl.ts
-└── product.repository.impl.ts
+src/app/
+└── app.config.ts
 ```

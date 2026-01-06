@@ -4,10 +4,8 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { ProductRepository } from './core/domain/repositories/product.repository';
 import { UserRepository } from './core/domain/repositories/user.repository';
-import { ProductService } from './core/infrastructure/services/product.service';
-import { UserService } from './core/infrastructure/services/user.service';
-import { UserRepositoryImpl } from './core/infrastructure/repositories/user.repository.impl';
-import { ProductRepositoryImpl } from './core/infrastructure/repositories/product.repository.impl';
+import { ProductNodeRepositoryImpl } from './core/infrastructure/repositories/node-implementation/product-node.repository.impl';
+import { UserNodeRepositoryImpl } from './core/infrastructure/repositories/node-implementation/user-node.repository.impl';
 
 /**
  * Configuración principal de la aplicación Angular.
@@ -36,47 +34,13 @@ export const appConfig: ApplicationConfig = {
    */
   providers: [
 
-    /**
-     * Provider del repositorio de usuarios.
-     *
-     * @remarks
-     * Este provider registra la implementación concreta
-     * {@link UserRepositoryImpl} como adaptador del contrato
-     * {@link UserRepository} definido en la capa de dominio.
-     *
-     * Gracias a este provider:
-     * - Los casos de uso dependen únicamente del contrato
-     * - La infraestructura puede cambiar sin afectar al dominio
-     *
-     * Este binding representa el punto de integración entre:
-     * - Dominio (Repository abstracto)
-     * - Infrastructure (RepositoryImpl)
-     *
-     * @see {@link UserRepository}
-     * @see {@link UserRepositoryImpl}
-     */
-    { provide: UserRepository, useClass: UserRepositoryImpl },
-
-    /**
-     * Provider del repositorio de productos.
-     *
-     * @remarks
-     * Registra {@link ProductRepositoryImpl} como la
-     * implementación concreta del contrato
-     * {@link ProductRepository}.
-     *
-     * Este patrón permite:
-     * - Inversión de dependencias
-     * - Sustitución transparente de la fuente de datos
-     * - Facilitar pruebas unitarias mediante mocks
-     *
-     * Es el único lugar donde el dominio
-     * conoce qué implementación se utiliza.
-     *
-     * @see {@link ProductRepository}
-     * @see {@link ProductRepositoryImpl}
-     */
-    { provide: ProductRepository, useClass: ProductRepositoryImpl },
+    //Local Providers
+    //{ provide: UserRepository, useClass: UserLocalRepositoryImpl },
+    //{ provide: ProductRepository, useClass: ProductLocalRepositoryImpl },
+    
+    //Node Providers
+    { provide: UserRepository, useClass: UserNodeRepositoryImpl },
+    { provide: ProductRepository, useClass: ProductNodeRepositoryImpl },
 
     /**
      * Proveedor de listeners globales de errores del navegador.
@@ -107,5 +71,7 @@ export const appConfig: ApplicationConfig = {
      * @see {@link routes}
      */
     provideRouter(routes),
+
+    provideHttpClient(),
   ]
 };

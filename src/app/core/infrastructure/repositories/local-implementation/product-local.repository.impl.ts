@@ -1,8 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { Product } from "../../domain/models/product.model";
-import { ProductRepository } from "../../domain/repositories/product.repository";
-import { ProductService } from "../services/product.service";
+import { ProductRepository } from "../../../domain/repositories/product.repository";
+import { DataService } from "../../services/data.service";
+import { Product } from "../../../domain/models/product.model";
 
 /**
  * Implementación concreta del repositorio de productos.
@@ -12,7 +12,7 @@ import { ProductService } from "../services/product.service";
  * y actúa como un **Adapter** entre:
  *
  * - El contrato del dominio {@link ProductRepository}
- * - La fuente de datos {@link ProductService}
+ * - La fuente de datos {@link DataService}
  *
  * Responsabilidades:
  * - Implementar el contrato definido por el dominio
@@ -23,10 +23,10 @@ import { ProductService } from "../services/product.service";
  * ❗ No expone detalles de infraestructura al dominio.
  *
  * @see {@link ProductRepository}
- * @see {@link ProductService}
+ * @see {@link DataService}
  */
 @Injectable()
-export class ProductRepositoryImpl extends ProductRepository {
+export class ProductLocalRepositoryImpl extends ProductRepository {
 
     /**
      * Datasource encargado de obtener los datos de productos.
@@ -36,7 +36,7 @@ export class ProductRepositoryImpl extends ProductRepository {
      * para evitar constructores explícitos y favorecer
      * un estilo más declarativo.
      */
-    private productService = inject(ProductService);
+    private dataService = inject(DataService);
 
     /**
      * Obtiene el listado completo de productos.
@@ -46,7 +46,7 @@ export class ProductRepositoryImpl extends ProductRepository {
      * {@link ProductRepository#getAll}.
      *
      * Actualmente delega directamente la llamada al
-     * {@link ProductService}, pero este es el lugar
+     * {@link DataService}, pero este es el lugar
      * adecuado para:
      * - Mapear DTOs a modelos de dominio
      * - Aplicar filtros o transformaciones
@@ -55,7 +55,7 @@ export class ProductRepositoryImpl extends ProductRepository {
      * @returns Observable que emite un arreglo de {@link Product}
      */
     getAll(): Observable<Product[]> {
-        return this.productService.getAll();
+        return this.dataService.getAllProductsLocal();
     }
 
 }
