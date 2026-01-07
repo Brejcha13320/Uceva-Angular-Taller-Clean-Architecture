@@ -48,6 +48,7 @@
     "jest-html-reporters": "3.1.7",
     "jest-preset-angular": "15.0.3",
     "ts-jest": "29.4.5",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "@faker-js/faker": "10.1.0"
   }
 }

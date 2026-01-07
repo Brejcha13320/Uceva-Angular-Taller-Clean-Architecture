@@ -1,11 +1,10 @@
-import { inject, Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { PRODUCTS_MOCK } from "../../../mocks/products.mocks";
-import { USERS_MOCK } from "../../../mocks/users.mocks";
-import { Product } from "../../domain/models/product.model";
-import { User } from "../../domain/models/user.model";
 import { HttpClient } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
+import { faker } from '@faker-js/faker';
+import { Observable, of } from "rxjs";
 import { environment } from "../../../../environments/environment";
+import { Product, ProductCategory } from "../../domain/models/product.model";
+import { User, UserEngineering } from "../../domain/models/user.model";
 
 /**
  * Servicio de infraestructura para obtención de datos.
@@ -55,28 +54,59 @@ export class DataService {
     /**
      * Obtiene el listado de USUARIOS desde datos locales simulados.
      *
-     * @remarks
-     * Devuelve información mockeada definida en `USERS_MOCK`.
      *
      * @param countUsers - Cantidad de usuarios a solicitar
      * @returns Observable que emite un arreglo de {@link User}
      */
     getAllUsersLocal(countUsers: number): Observable<User[]> {
-        return of(USERS_MOCK);
-    }
+        const users: User[] = [];
+        const userEngineerings: UserEngineering[] = [
+            'Sistemas',
+            'Electronica',
+            'Biomedica',
+            'Industrial',
+            'Ambiental',
+        ];
 
+        for(let i = 1 ; i <= countUsers ; i++){
+            users.push({
+                id: i,
+                name: faker.person.firstName(),
+                lastName: faker.person.lastName(),
+                age: faker.number.int({ min: 18, max: 65 }),
+                email: faker.internet.email(),
+                engineering: faker.helpers.arrayElement(userEngineerings),
+            })
+        }
+
+        return of(users);
+    }
 
     /**
      * Obtiene el listado de productos desde datos locales simulados.
-     *
-     * @remarks
-     * Devuelve información mockeada definida en `PRODUCTS_MOCK`.
      *
      * @param countProducts - Cantidad de productos a solicitar
      * @returns Observable que emite un arreglo de {@link Product}
      */
     getAllProductsLocal(countProducts: number): Observable<Product[]> {
-        return of(PRODUCTS_MOCK);
+        const products: Product[] = [];
+        const productCategories: ProductCategory[] = [
+            'Carnes',
+            'Frutas',
+            'Lacteos',
+            'Verduras'
+        ];
+        for(let i = 1; i <= countProducts ; i++){
+            products.push({
+                id: i,
+                name: faker.commerce.productName(),
+                price: Number(
+                    faker.commerce.price({ min: 1, max: 100, dec: 2 })
+                ),
+                category: faker.helpers.arrayElement(productCategories),
+            })
+        }
+        return of(products);
     }
 
     /**
