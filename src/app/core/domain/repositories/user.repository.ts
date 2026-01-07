@@ -40,5 +40,5 @@ export abstract class UserRepository {
    * - No transforma entidades de presentación.
    * - Mantiene el dominio independiente de la infraestructura.
    */
-  abstract getAll(): Observable<User[]>;
+  abstract getAll(countUsers: number): Observable<User[]>;
 }

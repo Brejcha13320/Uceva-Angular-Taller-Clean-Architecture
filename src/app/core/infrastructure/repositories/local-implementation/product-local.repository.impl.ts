@@ -52,10 +52,11 @@ export class ProductLocalRepositoryImpl extends ProductRepository {
      * - Aplicar filtros o transformaciones
      * - Manejar errores o estrategias de caché
      *
+     * @param countProducts - Cantidad de productos a solicitar
      * @returns Observable que emite un arreglo de {@link Product}
      */
-    getAll(): Observable<Product[]> {
-        return this.dataService.getAllProductsLocal();
+    getAll(countProducts: number): Observable<Product[]> {
+        return this.dataService.getAllProductsLocal(countProducts);
     }
 
 }

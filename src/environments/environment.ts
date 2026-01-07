@@ -16,16 +16,21 @@
  */
 export const environment = {
   /**
-   * URL base del backend de la aplicación.
+   * URL base del backend en NodeJS de la aplicación.
    *
    * @remarks
    * Se utiliza como punto de partida para construir
    * las peticiones HTTP hacia la API.
    *
-   * @example
-   * ```ts
-   * `${environment.baseUrl}/users`
-   * ```
    */
-  baseUrlNode: 'http://localhost:3000'
+  baseUrlNode: 'http://localhost:3000',
+  /**
+   * URL base del backend EN SpringBoot de la aplicación.
+   *
+   * @remarks
+   * Se utiliza como punto de partida para construir
+   * las peticiones HTTP hacia la API.
+   *
+   */
+  baseUrlSpringBoot: 'http://localhost:8080',
 };

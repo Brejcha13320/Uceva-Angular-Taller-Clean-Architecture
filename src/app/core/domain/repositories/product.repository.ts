@@ -41,5 +41,5 @@ export abstract class ProductRepository {
    * - No gestiona errores de presentación.
    * - Propaga los errores al consumidor.
    */
-  abstract getAll(): Observable<Product[]>;
+  abstract getAll(countUsers: number): Observable<Product[]>;
 }

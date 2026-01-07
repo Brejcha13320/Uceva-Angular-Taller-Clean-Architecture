@@ -26,7 +26,7 @@ import { Product } from "../../../domain/models/product.model";
  * @see {@link DataService}
  */
 @Injectable()
-export class ProductNodeRepositoryImpl extends ProductRepository {
+export class ProductSpringBootRepositoryImpl extends ProductRepository {
 
     /**
      * Datasource encargado de obtener los datos de productos.
@@ -55,7 +55,7 @@ export class ProductNodeRepositoryImpl extends ProductRepository {
      * @returns Observable que emite un arreglo de {@link Product}
      */
     getAll(countProducts: number): Observable<Product[]> {
-        return this.dataService.getAllProductsNode(countProducts);
+        return this.dataService.getAllProductsSpringBoot(countProducts);
     }
 
 }

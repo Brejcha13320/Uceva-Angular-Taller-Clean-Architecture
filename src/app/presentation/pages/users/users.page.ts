@@ -51,7 +51,7 @@ export class UsersPage {
    */
   ngOnInit(): void {
     this.state = 'loading';
-    this.getAllUsersUseCase.execute().subscribe({
+    this.getAllUsersUseCase.execute(10).subscribe({
       next: (users) => {
         this.users = users;
         this.state = 'success';

@@ -42,6 +42,14 @@ export class DataService {
      * definida en `environment`.
      */
     private nodeUrl = `${environment.baseUrlNode}/api`;
+    /**
+     * URL base del backend SpringBoot.
+     *
+     * @remarks
+     * Se construye a partir de la configuración de entorno
+     * definida en `environment`.
+     */
+    private springBootUrl = `${environment.baseUrlSpringBoot}/api`;
 
 
     /**
@@ -50,9 +58,10 @@ export class DataService {
      * @remarks
      * Devuelve información mockeada definida en `USERS_MOCK`.
      *
+     * @param countUsers - Cantidad de usuarios a solicitar
      * @returns Observable que emite un arreglo de {@link User}
      */
-    getAllUsersLocal(): Observable<User[]> {
+    getAllUsersLocal(countUsers: number): Observable<User[]> {
         return of(USERS_MOCK);
     }
 
@@ -63,9 +72,10 @@ export class DataService {
      * @remarks
      * Devuelve información mockeada definida en `PRODUCTS_MOCK`.
      *
+     * @param countProducts - Cantidad de productos a solicitar
      * @returns Observable que emite un arreglo de {@link Product}
      */
-    getAllProductsLocal(): Observable<Product[]> {
+    getAllProductsLocal(countProducts: number): Observable<Product[]> {
         return of(PRODUCTS_MOCK);
     }
 
@@ -112,6 +122,51 @@ export class DataService {
      */
     getAllProductsNode(countProducts: number): Observable<Product[]> {
         return this.httpClient.get<Product[]>(`${this.nodeUrl}/products/${countProducts}`);
+    }
+
+    /**
+     * Obtiene el listado de usuarios desde el backend SpringBoot.
+     *
+     * @remarks
+     * Realiza una petición HTTP GET al endpoint
+     * `/users/{countUsers}`.
+     *
+     * El número de usuarios a obtener se define
+     * mediante el parámetro `countUsers`.
+     *
+     * @param countUsers - Cantidad de usuarios a solicitar
+     * @returns Observable que emite un arreglo de {@link User}
+     *
+     * @example
+     * ```ts
+     * this.dataService.getAllUsersSpringBoot(10).subscribe(users => {
+     *   console.log(users);
+     * });
+     * ```
+     */
+    getAllUsersSpringBoot(countUsers: number): Observable<User[]> {
+        return this.httpClient.get<User[]>(`${this.springBootUrl}/users/${countUsers}`);
+    }
+
+    /**
+     * Obtiene el listado de productos desde el backend SpringBoot.
+     *
+     * @remarks
+     * Realiza una petición HTTP GET al endpoint
+     * `/products/{countProducts}`.
+     *
+     * @param countProducts - Cantidad de productos a solicitar
+     * @returns Observable que emite un arreglo de {@link Product}
+     *
+     * @example
+     * ```ts
+     * this.dataService.getAllProductsSpringBoot(5).subscribe(products => {
+     *   console.log(products);
+     * });
+     * ```
+     */
+    getAllProductsSpringBoot(countProducts: number): Observable<Product[]> {
+        return this.httpClient.get<Product[]>(`${this.springBootUrl}/products/${countProducts}`);
     }
 
 }

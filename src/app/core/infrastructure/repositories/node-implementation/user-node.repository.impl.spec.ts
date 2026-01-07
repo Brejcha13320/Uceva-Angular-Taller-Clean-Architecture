@@ -9,6 +9,7 @@ import { UserNodeRepositoryImpl } from './user-node.repository.impl';
 describe('UserNodeRepositoryImpl (Infrastructure)', () => {
   let repository: UserNodeRepositoryImpl;
 
+  const countUsers = 5;
   const DataServiceMock = { getAllUsersNode: jest.fn() };
 
   beforeEach(() => {
@@ -28,13 +29,14 @@ describe('UserNodeRepositoryImpl (Infrastructure)', () => {
 
   it('debe delegar la llamada a DataService.getAllUsersNode()', () => {
     const getAllSpy = DataServiceMock.getAllUsersNode.mockReturnValue(of([]));
-    repository.getAll().subscribe();
+    repository.getAll(countUsers).subscribe();
     expect(getAllSpy).toHaveBeenCalledTimes(1);
+    expect(getAllSpy).toHaveBeenCalledWith(countUsers);
   });
 
   it('debe devolver el listado de useros como Observable', (done) => {
     DataServiceMock.getAllUsersNode.mockReturnValue(of(USERS_MOCK))
-    repository.getAll().subscribe((users: User[]) => {
+    repository.getAll(countUsers).subscribe((users: User[]) => {
       expect(users).toEqual(USERS_MOCK);
       done();
     });

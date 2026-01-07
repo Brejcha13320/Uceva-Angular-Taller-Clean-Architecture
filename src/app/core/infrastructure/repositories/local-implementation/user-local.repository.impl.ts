@@ -46,10 +46,11 @@ export class UserLocalRepositoryImpl extends UserRepository {
      * - Manejo de errores
      * - Políticas de caché
      *
+     * @param countUsers - Cantidad de usuarios a solicitar
      * @returns Observable que emite un arreglo de {@link User}
      */
-    getAll(): Observable<User[]> {
-        return this.dataService.getAllUsersLocal();
+    getAll(countUsers: number): Observable<User[]> {
+        return this.dataService.getAllUsersLocal(countUsers);
     }
 
 }

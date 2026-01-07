@@ -8,6 +8,7 @@ import { USERS_MOCK } from "../../../mocks/users.mocks";
 describe('GetAllUsersUseCase', () => {
   let useCase: GetAllUsersUseCase;
 
+  const countUsers = 5;
   const UserRepositoryMock: jest.Mocked<UserRepository> = { getAll: jest.fn() };
 
   beforeEach(async () => {
@@ -27,17 +28,19 @@ describe('GetAllUsersUseCase', () => {
 
   it('debería delegar la llamada del repository', async () => {
     UserRepositoryMock.getAll.mockReturnValue(of(USERS_MOCK));
-    const result = await firstValueFrom(useCase.execute());
+    const result = await firstValueFrom(useCase.execute(countUsers));
     expect(UserRepositoryMock.getAll).toHaveBeenCalledTimes(1);
+    expect(UserRepositoryMock.getAll).toHaveBeenCalledWith(countUsers);
     expect(result).toEqual(USERS_MOCK);
   });
 
   it('debería propagar un error cuando el repositorio emita un error', async () => {
     const errorMessage = 'Fallo la busqueda de useros';
     UserRepositoryMock.getAll.mockReturnValue(throwError(() => new Error(errorMessage)));
-    const result = useCase.execute();
+    const result = useCase.execute(countUsers);
     await expect(firstValueFrom(result)).rejects.toThrow(errorMessage);
     expect(UserRepositoryMock.getAll).toHaveBeenCalledTimes(1);
+    expect(UserRepositoryMock.getAll).toHaveBeenCalledWith(countUsers);
   });
 
 });

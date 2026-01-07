@@ -57,7 +57,7 @@ export class GetAllProductsUseCase {
    * - No contiene lógica de presentación.
    * - Mantiene el principio de responsabilidad única.
    */
-  execute(): Observable<Product[]> {
-    return this.productRepository.getAll();
+  execute(countProducts: number): Observable<Product[]> {
+    return this.productRepository.getAll(countProducts);
   }
 }

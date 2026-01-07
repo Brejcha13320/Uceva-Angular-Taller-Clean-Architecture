@@ -52,7 +52,7 @@ export class ProductsPage {
    */
   ngOnInit(): void {
     this.state = 'loading';
-    this.getAllProductsUseCase.execute().subscribe({
+    this.getAllProductsUseCase.execute(10).subscribe({
       next: (products) => {
         this.products = products;
         this.state = 'success';

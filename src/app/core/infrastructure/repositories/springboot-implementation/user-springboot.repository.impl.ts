@@ -23,7 +23,7 @@ import { User } from "../../../domain/models/user.model";
  * @see {@link DataService}
  */
 @Injectable()
-export class UserNodeRepositoryImpl extends UserRepository {
+export class UserSpringBootRepositoryImpl extends UserRepository {
 
     /**
      * Datasource encargado de obtener los datos de usuarios.
@@ -49,7 +49,7 @@ export class UserNodeRepositoryImpl extends UserRepository {
      * @returns Observable que emite un arreglo de {@link User}
      */
     getAll(countUsers: number): Observable<User[]> {
-        return this.dataService.getAllUsersNode(countUsers);
+        return this.dataService.getAllUsersSpringBoot(countUsers);
     }
 
 }

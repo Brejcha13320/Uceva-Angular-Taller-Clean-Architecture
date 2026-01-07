@@ -8,6 +8,7 @@ import { ProductNodeRepositoryImpl } from './product-node.repository.impl';
 describe('ProductNodeRepositoryImpl (Infrastructure)', () => {
   let repository: ProductNodeRepositoryImpl;
 
+  const countProducts = 5;
   const DataServiceMock = {  getAllProductsNode: jest.fn() };
 
   beforeEach(() => {
@@ -27,13 +28,14 @@ describe('ProductNodeRepositoryImpl (Infrastructure)', () => {
 
   it('debe delegar la llamada a DataService.getAllProductsNode()', () => {
     const getAllSpy = DataServiceMock.getAllProductsNode.mockReturnValue(of([]));
-    repository.getAll().subscribe();
+    repository.getAll(countProducts).subscribe();
     expect(getAllSpy).toHaveBeenCalledTimes(1);
+    expect(getAllSpy).toHaveBeenCalledWith(countProducts);
   });
 
   it('debe devolver el listado de productos como Observable', (done) => {
     DataServiceMock.getAllProductsNode.mockReturnValue(of(PRODUCTS_MOCK))
-    repository.getAll().subscribe((products: Product[]) => {
+    repository.getAll(countProducts).subscribe((products: Product[]) => {
       expect(products).toEqual(PRODUCTS_MOCK);
       done();
     });

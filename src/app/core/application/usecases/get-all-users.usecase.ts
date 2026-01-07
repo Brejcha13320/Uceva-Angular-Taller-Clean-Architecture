@@ -53,7 +53,7 @@ export class GetAllUsersUseCase {
    * - Delegación directa al repositorio.
    * - Mantiene el dominio independiente de la infraestructura.
    */
-  execute(): Observable<User[]> {
-    return this.userRepository.getAll();
+  execute(countUsers: number): Observable<User[]> {
+    return this.userRepository.getAll(countUsers);
   }
 }
