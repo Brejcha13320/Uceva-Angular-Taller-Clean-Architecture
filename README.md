@@ -98,3 +98,31 @@ src/app/core/infrastructure/repositories/node
 src/app/
 └── app.config.ts
 ```
+
+# Funcionamiento del Frontend
+
+## Ejecutar Frontend
+```
+npm run start
+```
+
+## Urls Consumo
+
+### Frontend
+```
+http://localhost:4200
+```
+
+### Backend NodeJS
+```
+http://localhost:3000/api/docs
+http://localhost:3000/api/users/{countUsers}
+http://localhost:3000/api/products/{countProducts}
+```
+
+### Backend SpringBoot
+```
+http://localhost:3000/api/swagger-ui/index.html
+http://localhost:3000/api/users/{countUsers}
+http://localhost:3000/api/products/{countProducts}
+```
