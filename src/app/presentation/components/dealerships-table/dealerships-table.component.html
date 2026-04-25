@@ -1,0 +1,25 @@
+<table class="table table-striped border">
+	<thead>
+		<tr>
+			<th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Location</th>
+      <th scope="col">Continent</th>
+		</tr>
+	</thead>
+	<tbody>
+		@for (dealership of dealerships; track dealership) {
+			<tr>
+				<th scope="row">{{ dealership.id }}</th>
+				<td>{{ dealership.name }}</td>
+				<td>{{ dealership.location }}</td>
+				<td>
+					<dsb-badge-atom
+						[text]="dealership.continent"
+						[type]="continentType[dealership.continent]" >
+					</dsb-badge-atom>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

@@ -10,6 +10,13 @@ import { UserSpringBootRepositoryImpl } from './core/infrastructure/repositories
 import { ProductSpringBootRepositoryImpl } from './core/infrastructure/repositories/springboot-implementation/product-springboot.repository.impl';
 import { UserLocalRepositoryImpl } from './core/infrastructure/repositories/local-implementation/user-local.repository.impl';
 import { ProductLocalRepositoryImpl } from './core/infrastructure/repositories/local-implementation/product-local.repository.impl';
+import { VehicleRepository } from './core/domain/repositories/vehicle.repository';
+import { VehicleLocalRepositoryImpl } from './core/infrastructure/repositories/local-implementation/vehicle-local.repository.impl';
+import { VehicleNodeRepositoryImpl } from './core/infrastructure/repositories/node-implementation/vehicle-node.repository.impl';
+import { DealershipRepository } from './core/domain/repositories/dealership.repository';
+import { DealershipLocalRepositoryImpl } from './core/infrastructure/repositories/local-implementation/dealership-local.repository.impl';
+import { DealershipSpringBootRepositoryImpl } from './core/infrastructure/repositories/springboot-implementation/dealership-springboot.repository.impl';
+import { DealershipNodeRepositoryImpl } from './core/infrastructure/repositories/node-implementation/dealership-node.repository.impl';
 
 /**
  * Configuración principal de la aplicación Angular.
@@ -41,14 +48,20 @@ export const appConfig: ApplicationConfig = {
     //Local Providers
     { provide: UserRepository, useClass: UserLocalRepositoryImpl },
     { provide: ProductRepository, useClass: ProductLocalRepositoryImpl },
-    
+    { provide: VehicleRepository, useClass: VehicleLocalRepositoryImpl },
+    { provide: DealershipRepository, useClass: DealershipLocalRepositoryImpl },
+
     //Node Providers
-    //{ provide: UserRepository, useClass: UserNodeRepositoryImpl },
-    //{ provide: ProductRepository, useClass: ProductNodeRepositoryImpl },
+   // { provide: UserRepository, useClass: UserNodeRepositoryImpl },
+   // { provide: ProductRepository, useClass: ProductNodeRepositoryImpl },
+   // { provide: VehicleRepository, useClass: VehicleNodeRepositoryImpl },
+    // { provide: DealershipRepository, useClass: DealershipNodeRepositoryImpl },
 
     //SpringBoot Providers
     //{ provide: UserRepository, useClass: UserSpringBootRepositoryImpl },
     //{ provide: ProductRepository, useClass: ProductSpringBootRepositoryImpl },
+    //{ provide: VehicleRepository, useClass: VehicleSpringBootRepositoryImpl },
+    //{ provide: DealershipRepository, useClass: DealershipSpringBootRepositoryImpl },
 
     /**
      * Proveedor de listeners globales de errores del navegador.

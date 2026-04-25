@@ -1,0 +1,28 @@
+<table class="table table-striped border">
+	<thead>
+		<tr>
+			<th scope="col">Id</th>
+			<th scope="col">Marca</th>
+			<th scope="col">Categoría</th>
+			<th scope="col">Precio</th>
+			<th scope="col">Año</th>
+		</tr>
+	</thead>
+	<tbody>
+		@for (vehicle of vehicles; track vehicle) {
+			<tr>
+				<th scope="row">{{ vehicle.id }}</th>
+				<td>{{ vehicle.brand }}</td>
+				<td>
+					<dsb-badge-atom 
+						[text]="vehicle.category"
+						[type]="engineeringMap[vehicle.category]" >
+					</dsb-badge-atom>
+				</td>
+				<td>{{ vehicle.price }}</td>
+				<td>{{ vehicle.year }}</td>
+				
+			</tr>
+		}
+	</tbody>
+</table>

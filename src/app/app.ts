@@ -44,7 +44,8 @@ export class App {
    *   },
    *   navLinks: [
    *     { text: 'Usuarios', url: '/users' },
-   *     { text: 'Productos', url: '/products' }
+   *     { text: 'Productos', url: '/products' },
+   *     { text: 'Vehículos', url: '/vehicles' }
    *   ]
    * }
    * ```
@@ -58,6 +59,8 @@ export class App {
     navLinks: [
       { text: 'Usuarios', url: '/users' },
       { text: 'Productos', url: '/products' },
+      { text: 'Vehículos', url: '/vehicles' },
+      { text: 'Conseccionarios', url: '/dealerships' }
     ]
   };
 }
