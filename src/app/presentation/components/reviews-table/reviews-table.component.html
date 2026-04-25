@@ -1,0 +1,26 @@
+<table class="table table-striped table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Usuario ID</th>
+      <th scope="col">Producto ID</th>
+      <th scope="col">Calificación</th>
+      <th scope="col">Comentario</th>
+      <th scope="col">Fecha</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let review of reviews">
+      <td>{{ review.id }}</td>
+      <td>{{ review.userId }}</td>
+      <td>{{ review.productId }}</td>
+      <td>
+        <span class="badge" [ngClass]="review.rating >= 4 ? 'bg-success' : review.rating >= 3 ? 'bg-warning' : 'bg-danger'">
+          {{ review.rating }}/5
+        </span>
+      </td>
+      <td>{{ review.comment }}</td>
+      <td>{{ review.date }}</td>
+    </tr>
+  </tbody>
+</table>

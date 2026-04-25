@@ -1,0 +1,17 @@
+@switch(state){
+
+    @case('loading'){
+        <app-alert alertState="loading" text="Cargando Reseñas..." ></app-alert>
+    }
+
+    @case('error'){
+        <app-alert alertState="error" text="Error al Cargar las Reseñas" ></app-alert>
+    }
+
+    @case('success'){
+        <div class="container-fluid">
+            <app-reviews-table [reviews]="reviews"></app-reviews-table>
+        </div>
+    }
+
+}

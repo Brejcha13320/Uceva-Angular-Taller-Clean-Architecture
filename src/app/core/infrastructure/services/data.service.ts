@@ -5,6 +5,8 @@ import { Observable, of } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { Product, ProductCategory } from "../../domain/models/product.model";
 import { User, UserEngineering } from "../../domain/models/user.model";
+import { Review } from "../../domain/models/review.model";
+import { REVIEWS_MOCKS } from "../../../mocks/reviews.mocks";
 
 /**
  * Servicio de infraestructura para obtención de datos.
@@ -197,6 +199,67 @@ export class DataService {
      */
     getAllProductsSpringBoot(countProducts: number): Observable<Product[]> {
         return this.httpClient.get<Product[]>(`${this.springBootUrl}/products/${countProducts}`);
+    }
+
+    /**
+     * Obtiene el listado de reseñas desde datos locales simulados.
+     *
+     * @remarks
+     * Retorna los datos mock definidos en {@link REVIEWS_MOCKS}.
+     *
+     * @returns Observable que emite un arreglo de {@link Review}
+     *
+     * @example
+     * ```ts
+     * this.dataService.getAllReviewsLocal().subscribe(reviews => {
+     *   console.log(reviews);
+     * });
+     * ```
+     */
+    getAllReviewsLocal(): Observable<Review[]> {
+        return of(REVIEWS_MOCKS);
+    }
+
+    /**
+     * Obtiene el listado de reseñas desde el backend Node.js.
+     *
+     * @remarks
+     * Realiza una petición HTTP GET al endpoint
+     * `/reviews/{countReviews}`.
+     *
+     * @param countReviews - Cantidad de reseñas a solicitar
+     * @returns Observable que emite un arreglo de {@link Review}
+     *
+     * @example
+     * ```ts
+     * this.dataService.getAllReviewsNode(10).subscribe(reviews => {
+     *   console.log(reviews);
+     * });
+     * ```
+     */
+    getAllReviewsNode(countReviews: number): Observable<Review[]> {
+        return this.httpClient.get<Review[]>(`${this.nodeUrl}/reviews/${countReviews}`);
+    }
+
+    /**
+     * Obtiene el listado de reseñas desde el backend SpringBoot.
+     *
+     * @remarks
+     * Realiza una petición HTTP GET al endpoint
+     * `/reviews/{countReviews}`.
+     *
+     * @param countReviews - Cantidad de reseñas a solicitar
+     * @returns Observable que emite un arreglo de {@link Review}
+     *
+     * @example
+     * ```ts
+     * this.dataService.getAllReviewsSpringBoot(10).subscribe(reviews => {
+     *   console.log(reviews);
+     * });
+     * ```
+     */
+    getAllReviewsSpringBoot(countReviews: number): Observable<Review[]> {
+        return this.httpClient.get<Review[]>(`${this.springBootUrl}/reviews/${countReviews}`);
     }
 
 }

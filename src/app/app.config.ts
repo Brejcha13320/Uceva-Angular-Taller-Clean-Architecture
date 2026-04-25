@@ -4,12 +4,16 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { ProductRepository } from './core/domain/repositories/product.repository';
 import { UserRepository } from './core/domain/repositories/user.repository';
+import { ReviewRepository } from './core/domain/repositories/review.repository';
 import { ProductNodeRepositoryImpl } from './core/infrastructure/repositories/node-implementation/product-node.repository.impl';
 import { UserNodeRepositoryImpl } from './core/infrastructure/repositories/node-implementation/user-node.repository.impl';
+import { ReviewNodeRepositoryImpl } from './core/infrastructure/repositories/node-implementation/review-node.repository.impl';
 import { UserSpringBootRepositoryImpl } from './core/infrastructure/repositories/springboot-implementation/user-springboot.repository.impl';
 import { ProductSpringBootRepositoryImpl } from './core/infrastructure/repositories/springboot-implementation/product-springboot.repository.impl';
+import { ReviewSpringBootRepositoryImpl } from './core/infrastructure/repositories/springboot-implementation/review-springboot.repository.impl';
 import { UserLocalRepositoryImpl } from './core/infrastructure/repositories/local-implementation/user-local.repository.impl';
 import { ProductLocalRepositoryImpl } from './core/infrastructure/repositories/local-implementation/product-local.repository.impl';
+import { ReviewLocalRepositoryImpl } from './core/infrastructure/repositories/local-implementation/review-local.repository.impl';
 
 /**
  * Configuración principal de la aplicación Angular.
@@ -41,14 +45,17 @@ export const appConfig: ApplicationConfig = {
     //Local Providers
     { provide: UserRepository, useClass: UserLocalRepositoryImpl },
     { provide: ProductRepository, useClass: ProductLocalRepositoryImpl },
+    { provide: ReviewRepository, useClass: ReviewLocalRepositoryImpl },
     
     //Node Providers
     //{ provide: UserRepository, useClass: UserNodeRepositoryImpl },
     //{ provide: ProductRepository, useClass: ProductNodeRepositoryImpl },
+    //{ provide: ReviewRepository, useClass: ReviewNodeRepositoryImpl },
 
     //SpringBoot Providers
     //{ provide: UserRepository, useClass: UserSpringBootRepositoryImpl },
     //{ provide: ProductRepository, useClass: ProductSpringBootRepositoryImpl },
+    //{ provide: ReviewRepository, useClass: ReviewSpringBootRepositoryImpl },
 
     /**
      * Proveedor de listeners globales de errores del navegador.
