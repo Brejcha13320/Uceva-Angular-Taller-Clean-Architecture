@@ -1,0 +1,25 @@
+<table class="table table-striped border">
+	<thead>
+		<tr>
+			<th scope="col">Id</th>
+			<th scope="col">Nombre</th>
+			<th scope="col">Descripción</th>
+			<th scope="col">Estado</th>
+		</tr>
+	</thead>
+	<tbody>
+		@for (category of categories; track category.id) {
+			<tr>
+				<th scope="row">{{ category.id }}</th>
+				<td>{{ category.name }}</td>
+				<td>{{ category.description }}</td>
+				<td>
+					<dsb-badge-atom
+						[text]="category.active ? 'Activo' : 'Inactivo'"
+						[type]="badgeMap[category.active ? 'true' : 'false']">
+					</dsb-badge-atom>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

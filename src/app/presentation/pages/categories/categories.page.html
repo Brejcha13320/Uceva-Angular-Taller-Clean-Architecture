@@ -1,0 +1,15 @@
+@switch(state){
+
+    @case('loading'){
+        <app-alert alertState="loading" text="Cargando Categorías..." ></app-alert>
+    }
+
+    @case('error'){
+        <app-alert alertState="error" text="Error al Cargar las Categorías" ></app-alert>
+    }
+
+    @case('success'){
+        <app-categories-table [categories]="categories" ></app-categories-table>
+    }
+
+}

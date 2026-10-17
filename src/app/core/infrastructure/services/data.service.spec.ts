@@ -4,9 +4,11 @@ import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../../environments/environment';
 import { Product } from '../../domain/models/product.model';
 import { User } from '../../domain/models/user.model';
+import { OrderModel } from '../../domain/models/order.model';
 import { DataService } from './data.service';
 import { USERS_MOCK } from '../../../mocks/users.mocks';
 import { PRODUCTS_MOCK } from '../../../mocks/products.mocks';
+import { ORDERS_MOCK } from '../../../mocks/orders.mocks';
 
 jest.mock('@faker-js/faker', () => ({
   faker: {
@@ -51,7 +53,6 @@ describe('DataService', () => {
   });
 
   afterEach(() => {
-    // Verifica que no queden peticiones HTTP pendientes
     httpMock.verify();
   });
 
@@ -69,6 +70,13 @@ describe('DataService', () => {
   it('debe devolver el listado de productos locale', (done) => {
     service.getAllProductsLocal(countProducts).subscribe((products: Product[]) => {
       expect(products.length).toEqual(countProducts);
+      done();
+    });
+  });
+
+  it('debe devolver el listado de órdenes locale', (done) => {
+    service.getAllOrdersLocal().subscribe((orders: OrderModel[]) => {
+      expect(orders).toEqual(ORDERS_MOCK);
       done();
     });
   });
@@ -91,6 +99,15 @@ describe('DataService', () => {
     req.flush(PRODUCTS_MOCK);
   });
 
+  it('debe obtener órdenes desde Node por HTTP', () => {
+    service.getAllOrdersNode().subscribe((orders) => {
+      expect(orders).toEqual(ORDERS_MOCK);
+    });
+    const req = httpMock.expectOne(`${pathUrlNode}/orders`);
+    expect(req.request.method).toBe('GET');
+    req.flush(ORDERS_MOCK);
+  });
+
   it('debe obtener usuarios desde SpringBoot por HTTP', () => {
     service.getAllUsersSpringBoot(countUsers).subscribe((users) => {
       expect(users).toEqual(USERS_MOCK);
@@ -107,6 +124,52 @@ describe('DataService', () => {
     const req = httpMock.expectOne(`${pathUrlSpringBoot}/products/${countProducts}`);
     expect(req.request.method).toBe('GET');
     req.flush(PRODUCTS_MOCK);
+  });
+
+  it('debe obtener órdenes desde SpringBoot por HTTP', () => {
+    service.getAllOrdersSpringBoot().subscribe((orders) => {
+      expect(orders).toEqual(ORDERS_MOCK);
+    });
+    const req = httpMock.expectOne(`${pathUrlSpringBoot}/orders`);
+    expect(req.request.method).toBe('GET');
+    req.flush(ORDERS_MOCK);
+  });
+
+  it('debe devolver el listado de categorías locale', (done) => {
+    service.getAllCategoriesLocal().subscribe((categories) => {
+      expect(categories.length).toBe(5);
+      done();
+    });
+  });
+
+  it('debe obtener categorías desde Node por HTTP', () => {
+    service.getAllCategoriesNode().subscribe((categories) => {
+      expect(categories.length).toBe(5);
+    });
+    const req = httpMock.expectOne(`${pathUrlNode}/categories`);
+    expect(req.request.method).toBe('GET');
+    req.flush([
+      { id: 1, name: 'Lácteos', description: 'Desc', active: true },
+      { id: 2, name: 'Carnes', description: 'Desc', active: true },
+      { id: 3, name: 'Frutas', description: 'Desc', active: true },
+      { id: 4, name: 'Verduras', description: 'Desc', active: true },
+      { id: 5, name: 'Bebidas', description: 'Desc', active: true }
+    ]);
+  });
+
+  it('debe obtener categorías desde SpringBoot por HTTP', () => {
+    service.getAllCategoriesSpringBoot().subscribe((categories) => {
+      expect(categories.length).toBe(5);
+    });
+    const req = httpMock.expectOne(`${pathUrlSpringBoot}/categories`);
+    expect(req.request.method).toBe('GET');
+    req.flush([
+      { id: 1, name: 'Lácteos', description: 'Desc', active: true },
+      { id: 2, name: 'Carnes', description: 'Desc', active: true },
+      { id: 3, name: 'Frutas', description: 'Desc', active: true },
+      { id: 4, name: 'Verduras', description: 'Desc', active: true },
+      { id: 5, name: 'Bebidas', description: 'Desc', active: true }
+    ]);
   });
 
 });
