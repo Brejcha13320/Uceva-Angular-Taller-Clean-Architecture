@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { faker } from '@faker-js/faker';
-import { Observable, of } from "rxjs";
+import type { Faker } from "@faker-js/faker";
+import { from, map, Observable, shareReplay } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { Product, ProductCategory } from "../../domain/models/product.model";
 import { User, UserEngineering } from "../../domain/models/user.model";
@@ -54,6 +54,30 @@ export class DataService {
      */
     private springBootUrl = `${environment.baseUrlSpringBoot}/api`;
 
+    /**
+     * Carga diferida de Faker.
+     *
+     * @remarks
+     * Faker es una dependencia grande (~486 kB) que solo se necesita para
+     * generar los datos simulados. Se importa de forma dinámica para que
+     * quede en un chunk aparte y no infle el bundle inicial; la promesa se
+     * comparte para que la librería se cargue una única vez.
+     */
+    private readonly faker$ = from(import('@faker-js/faker/locale/en')).pipe(
+        map((modulo) => modulo.faker),
+        shareReplay(1),
+    );
+
+    /**
+     * Genera un listado local una vez que Faker está disponible.
+     *
+     * @param construir - Función que arma el listado con la instancia de Faker
+     * @returns Observable que emite el listado ya construido
+     */
+    private generarLocal<T>(construir: (faker: Faker) => T): Observable<T> {
+        return this.faker$.pipe(map(construir));
+    }
+
     // ---------------------------------------------------------------------
     // Métodos de usuarios
     // ---------------------------------------------------------------------
@@ -65,27 +89,29 @@ export class DataService {
      * @returns Observable que emite un arreglo de {@link User}
      */
     getAllUsersLocal(countUsers: number): Observable<User[]> {
-        const users: User[] = [];
-        const userEngineerings: UserEngineering[] = [
-            'Sistemas',
-            'Electronica',
-            'Biomedica',
-            'Industrial',
-            'Ambiental',
-        ];
+        return this.generarLocal((faker) => {
+            const users: User[] = [];
+            const userEngineerings: UserEngineering[] = [
+                'Sistemas',
+                'Electronica',
+                'Biomedica',
+                'Industrial',
+                'Ambiental',
+            ];
 
-        for(let i = 1 ; i <= countUsers ; i++){
-            users.push({
-                id: i,
-                name: faker.person.firstName(),
-                lastName: faker.person.lastName(),
-                age: faker.number.int({ min: 18, max: 65 }),
-                email: faker.internet.email(),
-                engineering: faker.helpers.arrayElement(userEngineerings),
-            })
-        }
+            for(let i = 1 ; i <= countUsers ; i++){
+                users.push({
+                    id: i,
+                    name: faker.person.firstName(),
+                    lastName: faker.person.lastName(),
+                    age: faker.number.int({ min: 18, max: 65 }),
+                    email: faker.internet.email(),
+                    engineering: faker.helpers.arrayElement(userEngineerings),
+                })
+            }
 
-        return of(users);
+            return users;
+        });
     }
 
     /**
@@ -95,24 +121,26 @@ export class DataService {
      * @returns Observable que emite un arreglo de {@link Product}
      */
     getAllProductsLocal(countProducts: number): Observable<Product[]> {
-        const products: Product[] = [];
-        const productCategories: ProductCategory[] = [
-            'Carnes',
-            'Frutas',
-            'Lacteos',
-            'Verduras'
-        ];
-        for(let i = 1; i <= countProducts ; i++){
-            products.push({
-                id: i,
-                name: faker.commerce.productName(),
-                price: Number(
-                    faker.commerce.price({ min: 1, max: 100, dec: 2 })
-                ),
-                category: faker.helpers.arrayElement(productCategories),
-            })
-        }
-        return of(products);
+        return this.generarLocal((faker) => {
+            const products: Product[] = [];
+            const productCategories: ProductCategory[] = [
+                'Carnes',
+                'Frutas',
+                'Lacteos',
+                'Verduras'
+            ];
+            for(let i = 1; i <= countProducts ; i++){
+                products.push({
+                    id: i,
+                    name: faker.commerce.productName(),
+                    price: Number(
+                        faker.commerce.price({ min: 1, max: 100, dec: 2 })
+                    ),
+                    category: faker.helpers.arrayElement(productCategories),
+                })
+            }
+            return products;
+        });
     }
 
     /**
@@ -221,38 +249,40 @@ export class DataService {
      * @returns Observable que emite un arreglo de {@link Course}
      */
     getAllCoursesLocal(countCourses: number): Observable<Course[]> {
-        const courses: Course[] = [];
-        const courseFaculties: CourseFaculty[] = [
-            'Ingenieria',
-            'Ciencias',
-            'Administracion',
-            'Derecho'
-        ];
-        const courseNames: string[] = [
-            'Programación Orientada a Objetos',
-            'Bases de Datos',
-            'Cálculo Diferencial',
-            'Estructuras de Datos',
-            'Redes de Computadores',
-            'Arquitectura de Software',
-            'Algebra Lineal',
-            'Fisión Mecánica',
-            'Contabilidad Basica',
-            'Derecho Constitucional',
-            'Estadistica',
-            'Ingenieria de Requisitos'
-        ];
+        return this.generarLocal((faker) => {
+            const courses: Course[] = [];
+            const courseFaculties: CourseFaculty[] = [
+                'Ingenieria',
+                'Ciencias',
+                'Administracion',
+                'Derecho'
+            ];
+            const courseNames: string[] = [
+                'Programación Orientada a Objetos',
+                'Bases de Datos',
+                'Cálculo Diferencial',
+                'Estructuras de Datos',
+                'Redes de Computadores',
+                'Arquitectura de Software',
+                'Algebra Lineal',
+                'Fisión Mecánica',
+                'Contabilidad Basica',
+                'Derecho Constitucional',
+                'Estadistica',
+                'Ingenieria de Requisitos'
+            ];
 
-        for (let i = 1; i <= countCourses; i++) {
-            courses.push({
-                id: i,
-                name: faker.helpers.arrayElement(courseNames),
-                credits: faker.number.int({ min: 1, max: 6 }),
-                teacher: faker.person.fullName(),
-                faculty: faker.helpers.arrayElement(courseFaculties)
-            });
-        }
-        return of(courses);
+            for (let i = 1; i <= countCourses; i++) {
+                courses.push({
+                    id: i,
+                    name: faker.helpers.arrayElement(courseNames),
+                    credits: faker.number.int({ min: 1, max: 6 }),
+                    teacher: faker.person.fullName(),
+                    faculty: faker.helpers.arrayElement(courseFaculties)
+                });
+            }
+            return courses;
+        });
     }
 
     /**
@@ -285,24 +315,26 @@ export class DataService {
      * @returns Observable que emite un arreglo de {@link Order}
      */
     getAllOrdersLocal(countOrders: number): Observable<Order[]> {
-        const orders: Order[] = [];
-        const statuses: OrderStatus[] = [
-            'Pendiente',
-            'Enviado',
-            'Entregado',
-            'Cancelado'
-        ];
+        return this.generarLocal((faker) => {
+            const orders: Order[] = [];
+            const statuses: OrderStatus[] = [
+                'Pendiente',
+                'Enviado',
+                'Entregado',
+                'Cancelado'
+            ];
 
-        for (let i = 1; i <= countOrders; i++) {
-            orders.push({
-                id: i,
-                customer: faker.person.fullName(),
-                total: faker.number.int({ min: 10000, max: 500000 }),
-                createdAt: faker.date.recent({ days: 30 }).toISOString(),
-                status: faker.helpers.arrayElement(statuses)
-            });
-        }
-        return of(orders);
+            for (let i = 1; i <= countOrders; i++) {
+                orders.push({
+                    id: i,
+                    customer: faker.person.fullName(),
+                    total: faker.number.int({ min: 10000, max: 500000 }),
+                    createdAt: faker.date.recent({ days: 30 }).toISOString(),
+                    status: faker.helpers.arrayElement(statuses)
+                });
+            }
+            return orders;
+        });
     }
 
     /**
@@ -335,38 +367,40 @@ export class DataService {
      * @returns Observable que emite un arreglo de {@link Book}
      */
     getAllBooksLocal(countBooks: number): Observable<Book[]> {
-        const books: Book[] = [];
-        const genres: BookGenre[] = [
-            'Novela',
-            'Ciencia',
-            'Historia',
-            'Tecnologia'
-        ];
-        const bookTitles: string[] = [
-            'Cien años de soledad',
-            'Clean Architecture',
-            'Breve historia del tiempo',
-            'El Quijote',
-            'Sapiens',
-            'Código limpio',
-            'La peste',
-            'Cosmos',
-            'Los miserables',
-            'Estructuras de datos y algoritmos',
-            'Historia de Colombia',
-            'El origen de las especies'
-        ];
+        return this.generarLocal((faker) => {
+            const books: Book[] = [];
+            const genres: BookGenre[] = [
+                'Novela',
+                'Ciencia',
+                'Historia',
+                'Tecnologia'
+            ];
+            const bookTitles: string[] = [
+                'Cien años de soledad',
+                'Clean Architecture',
+                'Breve historia del tiempo',
+                'El Quijote',
+                'Sapiens',
+                'Código limpio',
+                'La peste',
+                'Cosmos',
+                'Los miserables',
+                'Estructuras de datos y algoritmos',
+                'Historia de Colombia',
+                'El origen de las especies'
+            ];
 
-        for (let i = 1; i <= countBooks; i++) {
-            books.push({
-                id: i,
-                title: faker.helpers.arrayElement(bookTitles),
-                author: faker.person.fullName(),
-                year: faker.number.int({ min: 1950, max: 2025 }),
-                genre: faker.helpers.arrayElement(genres)
-            });
-        }
-        return of(books);
+            for (let i = 1; i <= countBooks; i++) {
+                books.push({
+                    id: i,
+                    title: faker.helpers.arrayElement(bookTitles),
+                    author: faker.person.fullName(),
+                    year: faker.number.int({ min: 1950, max: 2025 }),
+                    genre: faker.helpers.arrayElement(genres)
+                });
+            }
+            return books;
+        });
     }
 
     /**

@@ -14,7 +14,7 @@ import { COURSES_MOCK } from '../../../mocks/courses.mocks';
 import { ORDERS_MOCK } from '../../../mocks/orders.mocks';
 import { BOOKS_MOCK } from '../../../mocks/books.mocks';
 
-jest.mock('@faker-js/faker', () => ({
+jest.mock('@faker-js/faker/locale/en', () => ({
   faker: {
     commerce: {
       productName: jest.fn(() => 'Producto Test'),
