@@ -38,13 +38,11 @@ export class App {
    * ```ts
    * {
    *   title: 'Angular Client',
-   *   iconConfig: {
-   *     icon: 'bootstrap',
-   *     size: 2
-   *   },
+   *   iconConfig: { icon: 'bootstrap', size: 2 },
    *   navLinks: [
    *     { text: 'Usuarios', url: '/users' },
-   *     { text: 'Productos', url: '/products' }
+   *     { text: 'Productos', url: '/products' },
+   *     { text: 'Cursos', url: '/courses' }
    *   ]
    * }
    * ```
@@ -53,11 +51,14 @@ export class App {
     title: 'Angular Client',
     iconConfig: {
       icon: 'bootstrap',
-      size: 2
+      size: 2,
     },
     navLinks: [
       { text: 'Usuarios', url: '/users' },
       { text: 'Productos', url: '/products' },
-    ]
+      { text: 'Cursos', url: '/courses' },
+      { text: 'Pedidos', url: '/orders' },
+      { text: 'Libros', url: '/books' },
+    ],
   };
 }

@@ -14,5 +14,6 @@ module.exports = {
   collectCoverage: true,
   clearMocks: true,
   testMatch: ["**/*.spec.ts"],
+  transformIgnorePatterns: ['node_modules/(?!(.*\\.mjs$|@faker-js))'],
   rootDir: './'
 };
