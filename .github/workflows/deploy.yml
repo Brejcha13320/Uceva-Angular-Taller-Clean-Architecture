@@ -1,0 +1,189 @@
+name: CI/CD
+
+# Actividad académica de integración y despliegue continuo: el workflow instala,
+# prueba y compila la aplicación, la publica en GitHub Pages y después verifica
+# que la publicación responde.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+# Permisos mínimos por defecto; el job de despliegue los amplía.
+permissions:
+  contents: read
+
+# Una ejecución por referencia; si llega otra, cancela la anterior.
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Integración continua: corre siempre, incluidos los pull request.
+  build:
+    name: Build y pruebas
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v7
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          # @angular/cli 20.3.12 exige ^20.19.0 || ^22.12.0 || >=24.0.0.
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Jest se ejecuta una sola vez; --ci evita cualquier modo interactivo.
+      - name: Ejecutar pruebas
+        run: npm test -- --ci
+
+      # El base-href debe coincidir con el subdirectorio del repositorio en Pages.
+      - name: Compilar proyecto
+        run: npm run build -- --base-href /Uceva-Angular-Taller-Clean-Architecture/
+
+      # La app usa rutas limpias (PathLocationStrategy): sin este truco, recargar
+      # /users devolvería el 404 genérico de Pages en lugar de la aplicación.
+      - name: Copiar index.html a 404.html
+        run: cp dist/Angular-Standalone-Template/browser/index.html dist/Angular-Standalone-Template/browser/404.html
+
+      - name: Validar artefactos del build
+        run: |
+          DIR=dist/Angular-Standalone-Template/browser
+
+          if [ ! -f "$DIR/index.html" ]; then
+            echo "::error::No se encontró $DIR/index.html"
+            exit 1
+          fi
+
+          if [ ! -f "$DIR/404.html" ]; then
+            echo "::error::No se encontró $DIR/404.html"
+            exit 1
+          fi
+
+          if ! grep -q "/Uceva-Angular-Taller-Clean-Architecture/" "$DIR/index.html"; then
+            echo "::error::El index.html no contiene el base href /Uceva-Angular-Taller-Clean-Architecture/"
+            exit 1
+          fi
+
+      # El artefacto de Pages solo se genera para despliegues (push o ejecución
+      # manual); en pull request el job solo valida pruebas y build.
+      - name: Configurar Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v6
+
+      - name: Subir artefacto de Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist/Angular-Standalone-Template/browser
+
+  # Despliegue: solo en push o ejecución manual sobre la rama por defecto.
+  deploy:
+    name: Desplegar en GitHub Pages
+    needs: build
+    if: >-
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Desplegar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+  # Verificación posterior: comprueba la URL publicada con curl y reintentos.
+  verify:
+    name: Verificar despliegue
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar la publicación
+        id: verificacion
+        env:
+          URL_BASE: ${{ needs.deploy.outputs.page_url }}
+          INTENTOS_MAX: 10
+          SEGUNDOS_ESPERA: 15
+        run: |
+          URL="${URL_BASE%/}"
+          MAX="${INTENTOS_MAX}"
+          ESPERA="${SEGUNDOS_ESPERA}"
+
+          # GitHub Pages responde 301 si se consulta sin barra final, por eso
+          # aquí siempre se consulta "$URL/".
+          INTENTO=1
+          CODIGO=000
+          while [ "$INTENTO" -le "$MAX" ]; do
+            CODIGO=$(curl --silent --show-error --output "$RUNNER_TEMP/index-base.html" --write-out "%{http_code}" "$URL/")
+            if [ "$CODIGO" = "200" ]; then
+              break
+            fi
+            INTENTO=$((INTENTO + 1))
+            if [ "$INTENTO" -le "$MAX" ]; then
+              sleep "$ESPERA"
+            fi
+          done
+
+          if [ "$CODIGO" != "200" ]; then
+            echo "::error::La URL base ${URL}/ respondió ${CODIGO} después de $MAX intentos. No se pudo verificar el despliegue."
+            exit 1
+          fi
+
+          if ! grep -q "<app-root" "$RUNNER_TEMP/index-base.html"; then
+            echo "::error::El HTML publicado en ${URL} no contiene el marcador <app-root>."
+            exit 1
+          fi
+
+          # El bundle principal se sirve desde el subdirectorio del repositorio.
+          BUNDLE=$(grep -oE 'src="[^"]*main[^"]*\.js"' "$RUNNER_TEMP/index-base.html" | head -n 1 | sed -e 's/^src="//' -e 's/"$//' -e 's|^/Uceva-Angular-Taller-Clean-Architecture/||' -e 's|^/||')
+          if [ -z "$BUNDLE" ]; then
+            echo "::error::No se detectó el bundle JavaScript en el HTML publicado."
+            exit 1
+          fi
+
+          BUNDLE_CODE=$(curl --silent --show-error --output /dev/null --write-out "%{http_code}" "$URL/$BUNDLE")
+          if [ "$BUNDLE_CODE" != "200" ]; then
+            echo "::error::El bundle ${BUNDLE} respondió ${BUNDLE_CODE}, se esperaba 200."
+            exit 1
+          fi
+
+          # Ruta profunda real de la aplicación. Con el truco del 404.html el
+          # cuerpo trae la app aunque el estado HTTP sea 404, así que solo se
+          # exige el marcador <app-root>.
+          RUTA_PROFUNDA="users"
+          RUTA_CODE=$(curl --silent --show-error --output "$RUNNER_TEMP/index-profunda.html" --write-out "%{http_code}" "$URL/$RUTA_PROFUNDA")
+          RUTA_OK="false"
+          if grep -q "<app-root" "$RUNNER_TEMP/index-profunda.html"; then
+            RUTA_OK="true"
+          fi
+
+          {
+            echo "### Verificación del despliegue en GitHub Pages"
+            echo ""
+            echo "- URL publicada: \`${URL}/\`"
+            echo "- URL base: respuesta HTTP ${CODIGO}; contiene \`<app-root\`: OK"
+            echo "- Bundle principal (\`${BUNDLE}\`): respuesta HTTP ${BUNDLE_CODE}; esperado 200: OK"
+            echo "- Ruta profunda /${RUTA_PROFUNDA}: respuesta HTTP ${RUTA_CODE}; contiene \`<app-root\`: ${RUTA_OK}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$RUTA_OK" != "true" ]; then
+            echo "::error::La ruta /${RUTA_PROFUNDA} no devolvió el marcador <app-root>; el truco del 404.html no se aplicó como se esperaba."
+            exit 1
+          fi
